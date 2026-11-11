@@ -29,7 +29,7 @@ export default function ProductPage() {
     <main className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-8 md:grid-cols-2 md:py-12 lg:gap-16">
       {/* Gallery */}
       <div className="space-y-3 md:sticky md:top-24 md:self-start">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+        <div className="relative aspect-4/5 overflow-hidden rounded-2xl bg-muted">
           <Image
             src={color.image}
             alt={`${product.name} in ${color.name}`}
@@ -48,7 +48,7 @@ export default function ProductPage() {
               aria-label={`Show ${c.name}`}
               className={cn(
                 "relative aspect-square w-20 overflow-hidden rounded-lg bg-muted ring-offset-2 ring-offset-background transition",
-                c.id === color.id ? "ring-2 ring-foreground" : "opacity-70 hover:opacity-100",
+                c.id === color.id ? "ring-2 ring-primary" : "opacity-70 hover:opacity-100",
               )}
             >
               <Image src={c.image} alt="" fill sizes="80px" className="object-cover" />
@@ -78,7 +78,7 @@ export default function ProductPage() {
                   style={{ backgroundColor: c.swatch }}
                   className={cn(
                     "size-9 border ring-offset-2 ring-offset-background transition",
-                    c.id === color.id && "ring-2 ring-foreground",
+                    c.id === color.id && "ring-2 ring-primary",
                   )}
                 />
               ))}
