@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { CREDO_SCRIPT_URL } from "@/lib/credo";
 
 // The Credo inline script adds `CredoWidget` to window.
@@ -57,13 +58,9 @@ export function PayWithCredo({ amount, email, firstName, lastName, disabled }: P
   return (
     <>
       <Script src={CREDO_SCRIPT_URL} onReady={() => setScriptReady(true)} />
-      <button
-        onClick={pay}
-        disabled={disabled || !scriptReady || paying}
-        className="w-full rounded-xl bg-zinc-900 px-5 py-4 text-base font-semibold text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-40"
-      >
+      <Button size="lg" className="w-full" onClick={pay} disabled={disabled || !scriptReady || paying}>
         {!scriptReady ? "Loading checkout…" : paying ? "Complete payment in popup…" : "Pay with Credo"}
-      </button>
+      </Button>
     </>
   );
 }
