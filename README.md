@@ -1,4 +1,4 @@
-# DevDrip — Credo inline checkout demo
+# Common Thread — Credo inline checkout demo
 
 A single-product Next.js store that takes payments with the [Credo](https://docs.credocentral.com) inline popup.
 
