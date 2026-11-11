@@ -77,7 +77,7 @@ export default function ProductPage() {
                   aria-pressed={c.id === color.id}
                   style={{ backgroundColor: c.swatch }}
                   className={cn(
-                    "size-9 rounded-full border ring-offset-2 ring-offset-background transition",
+                    "size-9 border ring-offset-2 ring-offset-background transition",
                     c.id === color.id && "ring-2 ring-foreground",
                   )}
                 />
