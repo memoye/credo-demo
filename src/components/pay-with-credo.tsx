@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CREDO_SCRIPT_URL } from "@/lib/credo";
+import { formatNaira } from "@/lib/product";
 
 // The Credo inline script adds `CredoWidget` to window.
 declare global {
@@ -20,10 +21,11 @@ type Props = {
   email: string;
   firstName: string;
   lastName: string;
+  metadata?: Record<string, string | number>;
   disabled?: boolean;
 };
 
-export function PayWithCredo({ amount, email, firstName, lastName, disabled }: Props) {
+export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}, disabled }: Props) {
   const router = useRouter();
   const [scriptReady, setScriptReady] = useState(false);
   const [paying, setPaying] = useState(false);
@@ -42,6 +44,15 @@ export function PayWithCredo({ amount, email, firstName, lastName, disabled }: P
       reference: `DEMO${Date.now()}${Math.floor(Math.random() * 1000)}`, // alphanumeric only
       callbackUrl: `${window.location.origin}/success`,
 
+      // Your own order data travels with the payment.
+      metadata: {
+        customFields: Object.entries(metadata).map(([key, value]) => ({
+          variable_name: key,
+          value: String(value),
+          display_name: key[0].toUpperCase() + key.slice(1),
+        })),
+      },
+
       onClose: () => setPaying(false),
 
       // Payment finished in the popup. Don't trust this on its own —
@@ -58,8 +69,8 @@ export function PayWithCredo({ amount, email, firstName, lastName, disabled }: P
   return (
     <>
       <Script src={CREDO_SCRIPT_URL} onReady={() => setScriptReady(true)} />
-      <Button size="lg" className="w-full" onClick={pay} disabled={disabled || !scriptReady || paying}>
-        {!scriptReady ? "Loading checkout…" : paying ? "Complete payment in popup…" : "Pay with Credo"}
+      <Button size="lg" className="h-12 w-full text-base" onClick={pay} disabled={disabled || !scriptReady || paying}>
+        {!scriptReady ? "Loading checkout…" : paying ? "Complete payment in popup…" : `Pay ${formatNaira(amount)}`}
       </Button>
     </>
   );

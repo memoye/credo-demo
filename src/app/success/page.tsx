@@ -4,7 +4,7 @@ import { ArrowLeft, CircleCheck, CircleX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CREDO_API_URL } from "@/lib/credo";
-import { formatNaira } from "@/lib/products";
+import { formatNaira } from "@/lib/product";
 
 type CredoTransaction = {
   transRef: string;

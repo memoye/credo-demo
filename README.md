@@ -1,6 +1,6 @@
 # DevDrip — Credo inline checkout demo
 
-A tiny Next.js store that takes payments with the [Credo](https://docs.credocentral.com) inline popup.
+A single-product Next.js store that takes payments with the [Credo](https://docs.credocentral.com) inline popup.
 
 The whole integration is two files:
 
@@ -9,7 +9,7 @@ The whole integration is two files:
 | `src/components/pay-with-credo.tsx` | Loads Credo's `inline.js`, opens the popup with `CredoWidget.setup(...).openIframe()` |
 | `src/app/success/page.tsx` | **Server-side** verify: `GET /transaction/{transRef}/verify` with your secret key. Payment is only "confirmed" if Credo says `status: 0` |
 
-Everything else is just a shop UI (shadcn/ui).
+Everything else is just a product page (shadcn/ui). Product data lives in `src/lib/product.ts`; photos are from Unsplash.
 
 ## Run it
 

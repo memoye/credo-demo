@@ -1,139 +1,187 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
-import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { Check, Lock, Minus, Plus } from "lucide-react";
 import { PayWithCredo } from "@/components/pay-with-credo";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { IS_SANDBOX } from "@/lib/credo";
-import { formatNaira, products } from "@/lib/products";
+import { formatNaira, product } from "@/lib/product";
+import { cn } from "@/lib/utils";
 
-export default function Store() {
-  const [cart, setCart] = useState<Record<string, number>>({});
-  const [email, setEmail] = useState("");
+export default function ProductPage() {
+  const [color, setColor] = useState(product.colors[0]);
+  const [size, setSize] = useState<string>();
+  const [quantity, setQuantity] = useState(1);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
 
-  const add = (id: string) => setCart((c) => ({ ...c, [id]: (c[id] ?? 0) + 1 }));
-  const remove = (id: string) =>
-    setCart(({ [id]: qty = 0, ...rest }) => (qty > 1 ? { ...rest, [id]: qty - 1 } : rest));
-
-  const lines = products.filter((p) => cart[p.id]);
-  const itemCount = lines.reduce((n, p) => n + cart[p.id], 0);
-  const total = lines.reduce((sum, p) => sum + p.price * cart[p.id], 0);
-  const formValid = /\S+@\S+\.\S+/.test(email) && !!firstName.trim() && !!lastName.trim();
+  const total = product.price * quantity;
+  const ready = !!size && !!firstName.trim() && !!lastName.trim() && /\S+@\S+\.\S+/.test(email);
 
   return (
-    <div className="flex-1 pb-24 lg:pb-0">
-      <header className="border-b">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <span className="text-xl font-bold tracking-tight">DevDrip.</span>
-          {IS_SANDBOX && <Badge variant="secondary">Sandbox mode</Badge>}
+    <main className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-8 md:grid-cols-2 md:py-12 lg:gap-16">
+      {/* Gallery */}
+      <div className="space-y-3 md:sticky md:top-24 md:self-start">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+          <Image
+            src={color.image}
+            alt={`${product.name} in ${color.name}`}
+            fill
+            priority
+            placeholder="blur"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className="object-cover"
+          />
         </div>
-      </header>
-
-      <main className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[1fr_380px]">
-        <section>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Merch for people who ship.</h1>
-          <p className="mt-1 text-muted-foreground">Pick something, pay with Credo, done.</p>
-
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
-            {products.map((p) => (
-              <Card key={p.id} className="pt-0">
-                <div className="flex aspect-square items-center justify-center bg-muted text-6xl">{p.emoji}</div>
-                <CardHeader>
-                  <CardTitle>{p.name}</CardTitle>
-                  <CardDescription>{p.tagline}</CardDescription>
-                </CardHeader>
-                <CardFooter className="mt-auto justify-between">
-                  <span className="font-semibold">{formatNaira(p.price)}</span>
-                  <Button size="sm" onClick={() => add(p.id)}>
-                    <Plus /> Add
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <aside id="checkout" className="h-fit space-y-4 lg:sticky lg:top-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShoppingBag className="size-4" /> Your bag
-                {itemCount > 0 && <Badge variant="secondary">{itemCount}</Badge>}
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              {lines.length === 0 ? (
-                <p className="text-muted-foreground">Empty. Add something nice.</p>
-              ) : (
-                <ul className="space-y-2">
-                  {lines.map((p) => (
-                    <li key={p.id} className="flex items-center justify-between gap-2">
-                      <span className="truncate">
-                        {p.emoji} {p.name}
-                      </span>
-                      <span className="flex shrink-0 items-center gap-1">
-                        <Button variant="outline" size="icon-xs" onClick={() => remove(p.id)} aria-label={`Remove one ${p.name}`}>
-                          <Minus />
-                        </Button>
-                        <span className="w-5 text-center tabular-nums">{cart[p.id]}</span>
-                        <Button variant="outline" size="icon-xs" onClick={() => add(p.id)} aria-label={`Add one ${p.name}`}>
-                          <Plus />
-                        </Button>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+        <div className="flex gap-3">
+          {product.colors.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setColor(c)}
+              aria-label={`Show ${c.name}`}
+              className={cn(
+                "relative aspect-square w-20 overflow-hidden rounded-lg bg-muted ring-offset-2 ring-offset-background transition",
+                c.id === color.id ? "ring-2 ring-foreground" : "opacity-70 hover:opacity-100",
               )}
-
-              <Separator />
-              <div className="flex justify-between text-base font-semibold">
-                <span>Total</span>
-                <span>{formatNaira(total)}</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <Input placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                <Input placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-              </div>
-              <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-
-              <PayWithCredo
-                amount={total}
-                email={email}
-                firstName={firstName}
-                lastName={lastName}
-                disabled={total === 0 || !formValid}
-              />
-            </CardContent>
-          </Card>
-
-          {IS_SANDBOX && (
-            <Alert>
-              <AlertTitle>Test card (sandbox)</AlertTitle>
-              <AlertDescription>
-                <p className="font-mono">5200 0000 0000 2151</p>
-                <p>Any future expiry · any CVV · PIN 1111 · OTP 123456</p>
-              </AlertDescription>
-            </Alert>
-          )}
-        </aside>
-      </main>
-
-      {itemCount > 0 && (
-        <div className="fixed inset-x-4 bottom-4 lg:hidden">
-          <Button size="lg" className="w-full shadow-lg" render={<a href="#checkout" />} nativeButton={false}>
-            Checkout · {formatNaira(total)}
-          </Button>
+            >
+              <Image src={c.image} alt="" fill sizes="80px" className="object-cover" />
+            </button>
+          ))}
         </div>
-      )}
+      </div>
+
+      {/* Details + checkout */}
+      <div className="space-y-8">
+        <div className="space-y-3">
+          <Badge variant="secondary">New drop</Badge>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{product.name}</h1>
+          <p className="text-2xl">{formatNaira(product.price)}</p>
+          <p className="leading-relaxed text-muted-foreground">{product.description}</p>
+        </div>
+
+        <div className="space-y-6">
+          <Field label="Colour" value={color.name}>
+            <div className="flex gap-2">
+              {product.colors.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setColor(c)}
+                  aria-label={c.name}
+                  aria-pressed={c.id === color.id}
+                  style={{ backgroundColor: c.swatch }}
+                  className={cn(
+                    "size-9 rounded-full border ring-offset-2 ring-offset-background transition",
+                    c.id === color.id && "ring-2 ring-foreground",
+                  )}
+                />
+              ))}
+            </div>
+          </Field>
+
+          <Field label="Size" value={size}>
+            <div className="grid grid-cols-5 gap-2">
+              {product.sizes.map((s) => (
+                <Button
+                  key={s}
+                  variant={s === size ? "default" : "outline"}
+                  aria-pressed={s === size}
+                  onClick={() => setSize(s)}
+                  className="h-11"
+                >
+                  {s}
+                </Button>
+              ))}
+            </div>
+          </Field>
+
+          <Field label="Quantity">
+            <div className="flex w-fit items-center rounded-lg border">
+              <Button variant="ghost" size="icon" onClick={() => setQuantity((q) => Math.max(1, q - 1))} aria-label="Decrease quantity">
+                <Minus />
+              </Button>
+              <span className="w-10 text-center tabular-nums">{quantity}</span>
+              <Button variant="ghost" size="icon" onClick={() => setQuantity((q) => Math.min(10, q + 1))} aria-label="Increase quantity">
+                <Plus />
+              </Button>
+            </div>
+          </Field>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-4">
+          <h2 className="font-medium">Your details</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <TextField id="first" label="First name" value={firstName} onChange={setFirstName} autoComplete="given-name" />
+            <TextField id="last" label="Last name" value={lastName} onChange={setLastName} autoComplete="family-name" />
+          </div>
+          <TextField id="email" label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" />
+
+          <PayWithCredo
+            amount={total}
+            email={email}
+            firstName={firstName}
+            lastName={lastName}
+            disabled={!ready}
+            metadata={{ product: product.name, colour: color.name, size: size ?? "", quantity }}
+          />
+          {!size && <p className="text-center text-sm text-muted-foreground">Select a size to continue</p>}
+          <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+            <Lock className="size-3.5" /> Payments secured by Credo
+          </p>
+        </div>
+
+        {IS_SANDBOX && (
+          <Alert>
+            <AlertTitle>Sandbox — use a test card</AlertTitle>
+            <AlertDescription>
+              <p className="font-mono">5200 0000 0000 2151</p>
+              <p>Any future expiry · any CVV · PIN 1111 · OTP 123456</p>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          {product.details.map((d) => (
+            <li key={d} className="flex items-center gap-2">
+              <Check className="size-4 text-foreground" /> {d}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </main>
+  );
+}
+
+function Field({ label, value, children }: { label: string; value?: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2.5">
+      <p className="text-sm font-medium">
+        {label}
+        {value && <span className="font-normal text-muted-foreground"> — {value}</span>}
+      </p>
+      {children}
+    </div>
+  );
+}
+
+function TextField({
+  id,
+  label,
+  onChange,
+  ...props
+}: { id: string; label: string; value: string; type?: string; autoComplete?: string; onChange: (v: string) => void }) {
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id}>{label}</Label>
+      <Input id={id} className="h-10" onChange={(e) => onChange(e.target.value)} {...props} />
     </div>
   );
 }
