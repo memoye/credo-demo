@@ -24,25 +24,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${outfit.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <header className="sticky top-0 z-40 bg-navy/95 text-white backdrop-blur-md">
+        <header className="sticky top-0 z-40 border-b bg-background/90 text-foreground backdrop-blur-md">
           <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
+            <Link href="/" className="text-lg font-semibold tracking-tight text-foreground">
               Common Thread
             </Link>
             <div className="flex items-center gap-3">
-              {IS_SANDBOX && (
-                <Badge variant="outline" className="border-white/25 text-white/80">
-                  Sandbox
-                </Badge>
-              )}
+              {IS_SANDBOX && <Badge variant="secondary">Sandbox</Badge>}
             </div>
           </div>
         </header>
 
         <div className="flex flex-1 flex-col">{children}</div>
 
-        <footer className="bg-navy">
-          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-6 text-sm text-white/60 sm:flex-row sm:justify-between">
+        <footer className="border-t">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:justify-between">
             <span>Common Thread</span>
             <span>Demo store · Payments by Credo</span>
           </div>

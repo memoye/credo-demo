@@ -66,7 +66,7 @@ function Result({ ok, title, subtitle, raw }: { ok: boolean; title: string; subt
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-6 px-4 py-16">
       <Card>
         <CardHeader>
-          {ok ? <CircleCheck className="size-10 text-emerald-600" /> : <CircleX className="size-10 text-destructive" />}
+          {ok ? <CircleCheck className="size-10 text-success" /> : <CircleX className="size-10 text-destructive" />}
           <CardTitle className="text-2xl font-bold">{title}</CardTitle>
           {subtitle && <CardDescription>{subtitle}</CardDescription>}
         </CardHeader>

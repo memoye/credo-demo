@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-navy: var(--navy);
+  --color-success: var(--success);
   --font-sans: var(--font-outfit);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
@@ -55,30 +55,30 @@ html {
 
 :root {
   --background: #ffffff;
-  --foreground: #0b0f22;
+  --foreground: #000000;
   --card: #ffffff;
-  --card-foreground: #0b0f22;
+  --card-foreground: #000000;
   --popover: #ffffff;
-  --popover-foreground: #0b0f22;
-  --primary: #0664fe;
+  --popover-foreground: #000000;
+  --primary: #0765ff;
   --primary-foreground: #ffffff;
-  --secondary: #eef3ff;
-  --secondary-foreground: #0644cc;
-  --muted: #f4f6fb;
-  --muted-foreground: #5b6478;
-  --accent: #eef3ff;
-  --accent-foreground: #0644cc;
+  --secondary: #ebf2ff;
+  --secondary-foreground: #0765ff;
+  --muted: #f9fafb;
+  --muted-foreground: #637178;
+  --accent: #ebf2ff;
+  --accent-foreground: #0765ff;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e3e7f0;
-  --input: #d7dce8;
-  --ring: #0664fe;
+  --border: #eaecf0;
+  --input: #d0d5dd;
+  --ring: #0765ff;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0;
-  --navy: #0b0f22;
+  --success: #1f845a;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
