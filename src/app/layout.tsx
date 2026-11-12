@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Outfit } from "next/font/google";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Toaster } from "@/components/ui/sonner";
 import { IS_SANDBOX } from "@/lib/credo";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <span>Demo store · Payments by Credo</span>
           </div>
         </footer>
+        <Toaster theme="light" position="top-center" />
       </body>
     </html>
   );

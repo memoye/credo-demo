@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Check, Lock, Minus, Plus } from "lucide-react";
 import { PayWithCredo } from "@/components/pay-with-credo";
-import { PayWithRedirect } from "@/components/pay-with-redirect";
+import { PayWithRedirect, useRedirectCancelledToast } from "@/components/pay-with-redirect";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ const checkoutOptions = [
 
 export function ProductPage() {
   const [checkout, setCheckout] = useState<(typeof checkoutOptions)[number]["id"]>("popup");
+  // Came back from Credo's hosted page with Back? Toast it and keep "Redirect" selected.
+  useRedirectCancelledToast(() => setCheckout("redirect"));
   const [color, setColor] = useState(product.colors[0]);
   const [size, setSize] = useState<string>();
   const [quantity, setQuantity] = useState(1);

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowLeft, CircleCheck, CircleX } from "lucide-react";
+import { ForgetPendingRedirect } from "@/components/pay-with-redirect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CREDO_API_URL } from "@/lib/credo";
@@ -67,6 +68,7 @@ async function VerifiedResult({ searchParams }: Pick<PageProps<"/success">, "sea
 function Result({ ok, title, subtitle, raw }: { ok: boolean; title: string; subtitle?: string; raw?: unknown }) {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-6 px-4 py-16">
+      <ForgetPendingRedirect />
       <Card>
         <CardHeader>
           {ok ? <CircleCheck className="size-10 text-success" /> : <CircleX className="size-10 text-destructive" />}

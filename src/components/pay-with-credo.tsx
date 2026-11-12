@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CREDO_SCRIPT_URL, newReference, toCredoMetadata } from "@/lib/credo";
 import { formatNaira } from "@/lib/product";
@@ -52,7 +53,11 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
       // Your own order data travels with the payment.
       metadata: toCredoMetadata(metadata),
 
-      onClose: () => setPaying(false),
+      // Customer cancelled inside the popup.
+      onClose: () => {
+        setPaying(false);
+        toast.info("Payment cancelled", { description: "No money was taken. You can try again any time." });
+      },
 
       // Payment finished in the popup. Don't trust the browser —
       // go to /success, which verifies the reference on the server.
