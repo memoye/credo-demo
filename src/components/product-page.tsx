@@ -15,7 +15,13 @@ import { IS_SANDBOX } from "@/lib/credo";
 import { formatNaira, product } from "@/lib/product";
 import { cn } from "@/lib/utils";
 
-export function ProductPage({ checkout }: { checkout: "popup" | "redirect" }) {
+const checkoutOptions = [
+  { id: "popup", label: "Popup", hint: "Credo's checkout opens on top of this page." },
+  { id: "redirect", label: "Redirect", hint: "You'll be taken to Credo's hosted payment page and back." },
+] as const;
+
+export function ProductPage() {
+  const [checkout, setCheckout] = useState<(typeof checkoutOptions)[number]["id"]>("popup");
   const [color, setColor] = useState(product.colors[0]);
   const [size, setSize] = useState<string>();
   const [quantity, setQuantity] = useState(1);
@@ -125,6 +131,23 @@ export function ProductPage({ checkout }: { checkout: "popup" | "redirect" }) {
           </div>
           <TextField id="email" label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" />
 
+          <Field label="Checkout">
+            <div className="grid grid-cols-2 gap-2">
+              {checkoutOptions.map((o) => (
+                <Button
+                  key={o.id}
+                  variant={o.id === checkout ? "default" : "outline"}
+                  aria-pressed={o.id === checkout}
+                  onClick={() => setCheckout(o.id)}
+                  className="h-10"
+                >
+                  {o.label}
+                </Button>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground">{checkoutOptions.find((o) => o.id === checkout)?.hint}</p>
+          </Field>
+
           {checkout === "popup" ? (
             <PayWithCredo
               amount={total}
@@ -143,8 +166,7 @@ export function ProductPage({ checkout }: { checkout: "popup" | "redirect" }) {
           )}
           {!size && <p className="text-center text-sm text-muted-foreground">Select a size to continue</p>}
           <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-            <Lock className="size-3.5" />
-            {checkout === "popup" ? "Payments secured by Credo" : "You'll be taken to Credo's secure payment page"}
+            <Lock className="size-3.5" /> Payments secured by Credo
           </p>
         </div>
 

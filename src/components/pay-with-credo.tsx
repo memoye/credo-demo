@@ -56,7 +56,12 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
 
       // Payment finished in the popup. Don't trust the browser —
       // go to /success, which verifies the reference on the server.
-      callBack: () => router.push(successUrl),
+      callBack: () => {
+        // Next keeps this page alive in the background (cacheComponents), so reset
+        // the button now or it's still "paying" when the customer comes back.
+        setPaying(false);
+        router.push(successUrl);
+      },
     });
 
     handler.openIframe();
