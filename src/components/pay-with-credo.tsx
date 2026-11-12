@@ -4,7 +4,7 @@ import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CREDO_SCRIPT_URL } from "@/lib/credo";
+import { CREDO_SCRIPT_URL, newReference, toCredoMetadata } from "@/lib/credo";
 import { formatNaira } from "@/lib/product";
 
 // The Credo inline script adds `CredoWidget` to window.
@@ -36,7 +36,7 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
 
     // Our own order reference. Credo's verify endpoint accepts it, so we never
     // depend on what the popup hands back.
-    const reference = `DEMO${Date.now()}${Math.floor(Math.random() * 1000)}`; // alphanumeric only
+    const reference = newReference();
     const successUrl = `/success?reference=${reference}`;
 
     const handler = window.CredoWidget.setup({
@@ -50,13 +50,7 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
       callbackUrl: `${window.location.origin}${successUrl}`,
 
       // Your own order data travels with the payment.
-      metadata: {
-        customFields: Object.entries(metadata).map(([key, value]) => ({
-          variable_name: key,
-          value: String(value),
-          display_name: key[0].toUpperCase() + key.slice(1),
-        })),
-      },
+      metadata: toCredoMetadata(metadata),
 
       onClose: () => setPaying(false),
 

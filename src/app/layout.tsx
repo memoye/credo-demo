@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Outfit } from "next/font/google";
 import Link from "next/link";
+import { CheckoutSwitch } from "@/components/checkout-switch";
 import { Badge } from "@/components/ui/badge";
 import { IS_SANDBOX } from "@/lib/credo";
 import "./globals.css";
@@ -30,7 +31,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               Common Thread
             </Link>
             <div className="flex items-center gap-3">
-              {IS_SANDBOX && <Badge variant="secondary">Sandbox</Badge>}
+              <CheckoutSwitch />
+              {IS_SANDBOX && <Badge variant="secondary" className="hidden sm:inline-flex">Sandbox</Badge>}
             </div>
           </div>
         </header>
