@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, Lock } from "lucide-react";
-import { Field } from "@/components/field";
 import { PayWithCredo } from "@/components/pay-with-credo";
 import { PayWithRedirect, useRedirectCancelledToast } from "@/components/pay-with-redirect";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -12,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { IS_SANDBOX } from "@/lib/credo";
 import { formatNaira, product } from "@/lib/product";
@@ -106,8 +106,8 @@ export function CheckoutForm({ colorId, size, quantity }: Props) {
 
         <div className="space-y-6">
           <h2 className="font-medium">Payment</h2>
-          <Choice label="Checkout" options={checkoutOptions} value={checkout} onChange={setCheckout} />
-          <Choice label="Transaction fee" options={feeOptions} value={bearer} onChange={setBearer} />
+          <RadioCards label="Checkout" options={checkoutOptions} value={checkout} onChange={setCheckout} />
+          <RadioCards label="Transaction fee" options={feeOptions} value={bearer} onChange={setBearer} />
         </div>
 
         <div className="space-y-3">
@@ -147,7 +147,7 @@ export function CheckoutForm({ colorId, size, quantity }: Props) {
   );
 }
 
-function Choice<T extends string | number>({
+function RadioCards<T extends string | number>({
   label,
   options,
   value,
@@ -159,22 +159,28 @@ function Choice<T extends string | number>({
   onChange: (v: T) => void;
 }) {
   return (
-    <Field label={label}>
-      <div className="grid grid-cols-2 gap-2">
+    <div className="space-y-2.5">
+      <p className="text-sm font-medium">{label}</p>
+      <RadioGroup
+        aria-label={label}
+        value={value}
+        onValueChange={(v) => onChange(v as T)}
+        className="grid gap-3 sm:grid-cols-2"
+      >
         {options.map((o) => (
-          <Button
+          <label
             key={o.id}
-            variant={o.id === value ? "default" : "outline"}
-            aria-pressed={o.id === value}
-            onClick={() => onChange(o.id)}
-            className="h-10"
+            className="flex cursor-pointer items-start gap-3 border p-4 transition-colors hover:bg-muted/60 has-[[data-checked]]:border-primary has-[[data-checked]]:bg-secondary/50"
           >
-            {o.label}
-          </Button>
+            <RadioGroupItem value={o.id} className="mt-0.5" />
+            <span className="space-y-1">
+              <span className="block text-sm font-medium leading-none">{o.label}</span>
+              <span className="block text-sm text-muted-foreground">{o.hint}</span>
+            </span>
+          </label>
         ))}
-      </div>
-      <p className="text-sm text-muted-foreground">{options.find((o) => o.id === value)?.hint}</p>
-    </Field>
+      </RadioGroup>
+    </div>
   );
 }
 
