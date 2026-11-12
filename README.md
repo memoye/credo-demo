@@ -9,6 +9,9 @@ Pick **Popup** or **Redirect** above the Pay button.
 | Redirect | `src/app/actions.ts` | Server action: works out the price, calls `POST /transaction/initialize`, then redirects to Credo's hosted `authorizationUrl` |
 | Both | `src/app/success/page.tsx` | **Server-side** verify: `GET /transaction/{reference}/verify` with your secret key. Payment is only "confirmed" if Credo says `status: 0` |
 
+The **Transaction fee** choice sets Credo's `bearer` for either flow: `0` adds Credo's fee to the customer's
+total, `1` takes it out of what the store receives.
+
 Both flows use a reference we generate ourselves (`DEMO…`) and verify by that reference, so nothing depends
 on what the browser hands back.
 

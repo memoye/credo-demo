@@ -20,10 +20,17 @@ const checkoutOptions = [
   { id: "redirect", label: "Redirect", hint: "You'll be taken to Credo's hosted payment page and back." },
 ] as const;
 
+// Credo's `bearer`: who pays the transaction fee.
+const feeOptions = [
+  { id: 0, label: "Customer pays", hint: "Credo's fee is added to the customer's total at checkout." },
+  { id: 1, label: "We pay", hint: "Credo's fee comes out of what the store receives." },
+] as const;
+
 export function ProductPage() {
   const [checkout, setCheckout] = useState<(typeof checkoutOptions)[number]["id"]>("popup");
   // Came back from Credo's hosted page with Back? Toast it and keep "Redirect" selected.
   useRedirectCancelledToast(() => setCheckout("redirect"));
+  const [bearer, setBearer] = useState<(typeof feeOptions)[number]["id"]>(0);
   const [color, setColor] = useState(product.colors[0]);
   const [size, setSize] = useState<string>();
   const [quantity, setQuantity] = useState(1);
@@ -133,22 +140,8 @@ export function ProductPage() {
           </div>
           <TextField id="email" label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" />
 
-          <Field label="Checkout">
-            <div className="grid grid-cols-2 gap-2">
-              {checkoutOptions.map((o) => (
-                <Button
-                  key={o.id}
-                  variant={o.id === checkout ? "default" : "outline"}
-                  aria-pressed={o.id === checkout}
-                  onClick={() => setCheckout(o.id)}
-                  className="h-10"
-                >
-                  {o.label}
-                </Button>
-              ))}
-            </div>
-            <p className="text-sm text-muted-foreground">{checkoutOptions.find((o) => o.id === checkout)?.hint}</p>
-          </Field>
+          <Choice label="Checkout" options={checkoutOptions} value={checkout} onChange={setCheckout} />
+          <Choice label="Transaction fee" options={feeOptions} value={bearer} onChange={setBearer} />
 
           {checkout === "popup" ? (
             <PayWithCredo
@@ -156,6 +149,7 @@ export function ProductPage() {
               email={email}
               firstName={firstName}
               lastName={lastName}
+              bearer={bearer}
               disabled={!ready}
               metadata={{ product: product.name, colour: color.name, size: size ?? "", quantity }}
             />
@@ -163,7 +157,7 @@ export function ProductPage() {
             <PayWithRedirect
               amount={total}
               disabled={!ready}
-              order={{ colorId: color.id, size: size ?? "", quantity, firstName, lastName, email }}
+              order={{ colorId: color.id, size: size ?? "", quantity, firstName, lastName, email, bearer }}
             />
           )}
           {!size && <p className="text-center text-sm text-muted-foreground">Select a size to continue</p>}
@@ -203,6 +197,37 @@ function Field({ label, value, children }: { label: string; value?: string; chil
       </p>
       {children}
     </div>
+  );
+}
+
+function Choice<T extends string | number>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: readonly { id: T; label: string; hint: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <Field label={label}>
+      <div className="grid grid-cols-2 gap-2">
+        {options.map((o) => (
+          <Button
+            key={o.id}
+            variant={o.id === value ? "default" : "outline"}
+            aria-pressed={o.id === value}
+            onClick={() => onChange(o.id)}
+            className="h-10"
+          >
+            {o.label}
+          </Button>
+        ))}
+      </div>
+      <p className="text-sm text-muted-foreground">{options.find((o) => o.id === value)?.hint}</p>
+    </Field>
   );
 }
 

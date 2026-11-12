@@ -22,11 +22,12 @@ type Props = {
   email: string;
   firstName: string;
   lastName: string;
+  bearer: 0 | 1; // who pays Credo's fee: 0 = customer, 1 = merchant
   metadata?: Record<string, string | number>;
   disabled?: boolean;
 };
 
-export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}, disabled }: Props) {
+export function PayWithCredo({ amount, email, firstName, lastName, bearer, metadata = {}, disabled }: Props) {
   const router = useRouter();
   const [scriptReady, setScriptReady] = useState(false);
   const [paying, setPaying] = useState(false);
@@ -47,6 +48,7 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
       customerLastName: lastName,
       amount: Math.round(amount * 100), // Credo wants the lowest unit: kobo
       currency: "NGN",
+      bearer,
       reference,
       callbackUrl: `${window.location.origin}${successUrl}`,
 

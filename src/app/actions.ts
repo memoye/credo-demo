@@ -12,6 +12,7 @@ export type Order = {
   firstName: string;
   lastName: string;
   email: string;
+  bearer: 0 | 1; // who pays Credo's fee: 0 = customer, 1 = merchant
 };
 
 export async function startCheckout(order: Order): Promise<{ error: string }> {
@@ -43,7 +44,7 @@ export async function startCheckout(order: Order): Promise<{ error: string }> {
       customerLastName: order.lastName,
       reference,
       callbackUrl: `${origin}/success?reference=${reference}`, // where Credo sends the customer back
-      bearer: 0, // 0 = customer pays the fee, 1 = merchant
+      bearer: order.bearer === 1 ? 1 : 0,
       channels: ["CARD", "BANK"],
       metadata: toCredoMetadata({ product: product.name, colour: color.name, size: order.size, quantity }),
     }),
