@@ -1,7 +1,9 @@
 # Common Thread — Credo checkout demo
 
 A single-product Next.js store that takes payments with [Credo](https://docs.credocentral.com), two ways.
-Pick **Popup** or **Redirect** above the Pay button.
+The product page (`/`) picks colour, size and quantity, then hands them to the checkout page
+(`/checkout?colour=…&size=…&qty=…`), which re-validates them on the server. Pick **Popup** or **Redirect**
+above the Pay button.
 
 | Flow | File | What it does |
 | --- | --- | --- |

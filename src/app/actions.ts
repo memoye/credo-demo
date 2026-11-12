@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CREDO_API_URL, newReference, toCredoMetadata } from "@/lib/credo";
-import { product } from "@/lib/product";
+import { parseSelection, product } from "@/lib/product";
 
 export type Order = {
   colorId: string;
@@ -16,11 +16,9 @@ export type Order = {
 };
 
 export async function startCheckout(order: Order): Promise<{ error: string }> {
-  const color = product.colors.find((c) => c.id === order.colorId);
-  const quantity = Math.trunc(order.quantity);
-  if (!color || !product.sizes.includes(order.size) || !(quantity >= 1 && quantity <= 10)) {
-    return { error: "Invalid order" };
-  }
+  const selection = parseSelection({ colour: order.colorId, size: order.size, qty: order.quantity });
+  if (!selection) return { error: "Invalid order" };
+  const { color, quantity } = selection;
 
   // The price is worked out here on the server — the browser can't tamper with it.
   const amount = product.price * quantity;

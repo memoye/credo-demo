@@ -18,3 +18,17 @@ export const product = {
 
 export const formatNaira = (amount: number) =>
   new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(amount);
+
+export const MAX_QUANTITY = 10;
+
+// The product page passes the selection to /checkout in the URL. Check it before trusting it.
+export function parseSelection(input: { colour?: string; size?: string; qty?: string | number }) {
+  const color = product.colors.find((c) => c.id === input.colour);
+  const size = product.sizes.find((s) => s === input.size);
+  const quantity = Math.trunc(Number(input.qty));
+  if (!color || !size || !(quantity >= 1 && quantity <= MAX_QUANTITY)) return null;
+  return { color, size, quantity };
+}
+
+export const checkoutHref = (colour: string, size: string, qty: number) =>
+  `/checkout?${new URLSearchParams({ colour, size, qty: String(qty) })}`;
