@@ -15,6 +15,7 @@ type CredoTransaction = {
   customerId: string;
   transactionDate: string;
   status: number; // 0 = successful
+  statusMessage?: string;
 };
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -33,12 +34,14 @@ export default function SuccessPage({ searchParams }: PageProps<"/success">) {
 
 async function VerifiedResult({ searchParams }: Pick<PageProps<"/success">, "searchParams">) {
   const params = await searchParams;
-  const transRef = first(params.transRef) ?? first(params.trans_ref) ?? first(params.reference);
+  // Our own reference (or Credo's transRef). Keep only the alphanumeric part in case
+  // anything gets appended to the callback URL.
+  const ref = (first(params.reference) || first(params.transRef) || "").match(/^[A-Za-z0-9]+/)?.[0];
 
-  if (!transRef) return <Result ok={false} title="No transaction reference" />;
+  if (!ref) return <Result ok={false} title="No transaction reference" />;
 
   // 🔐 Runs on the server. The secret key never reaches the browser.
-  const res = await fetch(`${CREDO_API_URL}/transaction/${encodeURIComponent(transRef)}/verify`, {
+  const res = await fetch(`${CREDO_API_URL}/transaction/${ref}/verify`, {
     headers: { Authorization: process.env.CREDO_SECRET_KEY! },
     cache: "no-store",
   });
@@ -54,7 +57,7 @@ async function VerifiedResult({ searchParams }: Pick<PageProps<"/success">, "sea
       subtitle={
         paid
           ? `${formatNaira(tx!.transAmount)} received from ${tx!.customerId}`
-          : body?.message ?? `Credo returned HTTP ${res.status}`
+          : tx?.statusMessage || body?.message || `Credo returned HTTP ${res.status}`
       }
       raw={body}
     />

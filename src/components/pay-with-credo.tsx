@@ -34,6 +34,11 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
     if (!window.CredoWidget) return;
     setPaying(true);
 
+    // Our own order reference. Credo's verify endpoint accepts it, so we never
+    // depend on what the popup hands back.
+    const reference = `DEMO${Date.now()}${Math.floor(Math.random() * 1000)}`; // alphanumeric only
+    const successUrl = `/success?reference=${reference}`;
+
     const handler = window.CredoWidget.setup({
       key: process.env.NEXT_PUBLIC_CREDO_PUBLIC_KEY, // public key — safe in the browser
       email,
@@ -41,8 +46,8 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
       customerLastName: lastName,
       amount: Math.round(amount * 100), // Credo wants the lowest unit: kobo
       currency: "NGN",
-      reference: `DEMO${Date.now()}${Math.floor(Math.random() * 1000)}`, // alphanumeric only
-      callbackUrl: `${window.location.origin}/success`,
+      reference,
+      callbackUrl: `${window.location.origin}${successUrl}`,
 
       // Your own order data travels with the payment.
       metadata: {
@@ -55,12 +60,9 @@ export function PayWithCredo({ amount, email, firstName, lastName, metadata = {}
 
       onClose: () => setPaying(false),
 
-      // Payment finished in the popup. Don't trust this on its own —
-      // send the transRef to the server and verify it there.
-      callBack: (response: { transRef?: string; reference?: string }) => {
-        const ref = response.transRef ?? response.reference ?? "";
-        router.push(`/success?transRef=${encodeURIComponent(ref)}`);
-      },
+      // Payment finished in the popup. Don't trust the browser —
+      // go to /success, which verifies the reference on the server.
+      callBack: () => router.push(successUrl),
     });
 
     handler.openIframe();
