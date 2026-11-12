@@ -1,23 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import type { VerifyTransactionResponse } from "credo-types";
 import { ArrowLeft, CircleCheck, CircleX } from "lucide-react";
 import { ForgetPendingRedirect } from "@/components/pay-with-redirect";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CREDO_API_URL } from "@/lib/credo";
 import { formatNaira } from "@/lib/product";
-
-type CredoTransaction = {
-  transRef: string;
-  businessRef: string;
-  transAmount: number;
-  transFeeAmount: number;
-  currencyCode: string;
-  customerId: string;
-  transactionDate: string;
-  status: number; // 0 = successful
-  statusMessage?: string;
-};
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
@@ -46,8 +35,8 @@ async function VerifiedResult({ searchParams }: Pick<PageProps<"/success">, "sea
     headers: { Authorization: process.env.CREDO_SECRET_KEY! },
     cache: "no-store",
   });
-  const body = await res.json().catch(() => null);
-  const tx: CredoTransaction | undefined = body?.data;
+  const body: VerifyTransactionResponse | null = await res.json().catch(() => null);
+  const tx = body?.data || undefined; // data is "" when the lookup fails
 
   const paid = res.ok && tx?.status === 0;
 

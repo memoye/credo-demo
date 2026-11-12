@@ -1,3 +1,5 @@
+import type { Metadata } from "credo-types";
+
 // Credo has two completely separate environments (different accounts + keys).
 // Sandbox keys start with 0PUB / live keys start with 1PUB.
 const isLive = process.env.NEXT_PUBLIC_CREDO_ENV === "live";
@@ -16,7 +18,7 @@ export const CREDO_API_URL = isLive
 export const newReference = () => `DEMO${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
 // Your own order data travels with the payment as Credo "custom fields".
-export const toCredoMetadata = (data: Record<string, string | number>) => ({
+export const toCredoMetadata = (data: Record<string, string | number>): Metadata => ({
   customFields: Object.entries(data).map(([key, value]) => ({
     variable_name: key,
     value: String(value),

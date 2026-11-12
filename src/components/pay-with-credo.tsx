@@ -4,16 +4,15 @@ import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import type { CredoWidget, FeeBearer } from "credo-types";
 import { Button } from "@/components/ui/button";
 import { CREDO_SCRIPT_URL, newReference, toCredoMetadata } from "@/lib/credo";
 import { formatNaira } from "@/lib/product";
 
-// The Credo inline script adds `CredoWidget` to window.
+// Credo's inline.js adds `CredoWidget` to window — typed by credo-types.
 declare global {
   interface Window {
-    CredoWidget?: {
-      setup(options: Record<string, unknown>): { openIframe(): void };
-    };
+    CredoWidget?: CredoWidget;
   }
 }
 
@@ -22,7 +21,7 @@ type Props = {
   email: string;
   firstName: string;
   lastName: string;
-  bearer: 0 | 1; // who pays Credo's fee: 0 = customer, 1 = merchant
+  bearer: FeeBearer; // who pays Credo's fee: 0 = customer, 1 = merchant
   metadata?: Record<string, string | number>;
   disabled?: boolean;
 };
@@ -42,7 +41,7 @@ export function PayWithCredo({ amount, email, firstName, lastName, bearer, metad
     const successUrl = `/success?reference=${reference}`;
 
     const handler = window.CredoWidget.setup({
-      key: process.env.NEXT_PUBLIC_CREDO_PUBLIC_KEY, // public key — safe in the browser
+      key: process.env.NEXT_PUBLIC_CREDO_PUBLIC_KEY!, // public key — safe in the browser
       email,
       customerFirstName: firstName,
       customerLastName: lastName,

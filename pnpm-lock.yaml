@@ -54,6 +54,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.3.0(@types/react@19.3.0)
+      credo-types:
+        specifier: 2.0.0
+        version: 2.0.0
       eslint:
         specifier: ^9
         version: 9.39.5(jiti@2.7.0)(supports-color@7.2.0)
@@ -1110,6 +1113,9 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+
+  credo-types@2.0.0:
+    resolution: {integrity: sha512-TsVNjlWLuWmYK7/sZmPVANAHUHCUkjHeNqUf+DYYlMgOF6udtWimy9sOB3tTOcHnvNKJDY06OqwaRFazwl/9vg==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -3710,6 +3716,8 @@ snapshots:
       semver: 7.8.6
 
   convert-source-map@2.0.0: {}
+
+  credo-types@2.0.0: {}
 
   cross-spawn@7.0.6:
     dependencies:

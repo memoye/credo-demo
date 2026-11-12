@@ -1,5 +1,6 @@
 "use server";
 
+import type { FeeBearer, InitializeTransactionRequest, InitializeTransactionResponse } from "credo-types";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { CREDO_API_URL, newReference, toCredoMetadata } from "@/lib/credo";
@@ -12,7 +13,7 @@ export type Order = {
   firstName: string;
   lastName: string;
   email: string;
-  bearer: 0 | 1; // who pays Credo's fee: 0 = customer, 1 = merchant
+  bearer: FeeBearer; // who pays Credo's fee: 0 = customer, 1 = merchant
 };
 
 export async function startCheckout(order: Order): Promise<{ error: string }> {
@@ -45,12 +46,12 @@ export async function startCheckout(order: Order): Promise<{ error: string }> {
       bearer: order.bearer === 1 ? 1 : 0,
       channels: ["CARD", "BANK"],
       metadata: toCredoMetadata({ product: product.name, colour: color.name, size: order.size, quantity }),
-    }),
+    } satisfies InitializeTransactionRequest),
   });
-  const body = await res.json().catch(() => null);
-  const authorizationUrl: unknown = body?.data?.authorizationUrl;
+  const body: InitializeTransactionResponse | null = await res.json().catch(() => null);
+  const authorizationUrl = body?.data ? body.data.authorizationUrl : undefined;
 
-  if (!res.ok || typeof authorizationUrl !== "string") {
+  if (!res.ok || !authorizationUrl) {
     return { error: body?.message ?? `Credo returned HTTP ${res.status}` };
   }
 
