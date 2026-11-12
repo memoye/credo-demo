@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const modes = [
-  { href: "/", label: "Popup" },
+  { href: "/popup", label: "Popup" },
   { href: "/redirect", label: "Redirect" },
 ];
 

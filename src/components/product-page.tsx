@@ -153,7 +153,7 @@ export function ProductPage({ checkout }: { checkout: "popup" | "redirect" }) {
             <AlertTitle>Sandbox — use a test card</AlertTitle>
             <AlertDescription>
               <p className="font-mono">5200 0000 0000 2151</p>
-              <p>Any future expiry · any CVV · PIN 1111 · OTP 123456</p>
+              <p>Any future expiry · any CVV · OTP 1234 (PIN 1111 if asked)</p>
             </AlertDescription>
           </Alert>
         )}
