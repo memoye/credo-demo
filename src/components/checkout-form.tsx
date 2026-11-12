@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ArrowLeft, Lock } from "lucide-react";
 import { PayWithCredo } from "@/components/pay-with-credo";
 import { PayWithRedirect, useRedirectCancelledToast } from "@/components/pay-with-redirect";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -102,13 +103,23 @@ export function CheckoutForm({ colorId, size, quantity }: Props) {
           <TextField id="email" label="Email" type="email" value={email} onChange={setEmail} autoComplete="email" />
         </div>
 
-        <Separator />
-
-        <div className="space-y-6">
-          <h2 className="font-medium">Payment</h2>
-          <RadioCards label="Checkout" options={checkoutOptions} value={checkout} onChange={setCheckout} />
-          <RadioCards label="Transaction fee" options={feeOptions} value={bearer} onChange={setBearer} />
-        </div>
+        <Accordion className="border px-4">
+          <AccordionItem value="more-settings">
+            <AccordionTrigger className="py-4 hover:no-underline">
+              <span className="flex flex-1 flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <span className="font-medium">More settings</span>
+                <span className="text-sm font-normal text-muted-foreground">
+                  {checkoutOptions.find((o) => o.id === checkout)?.label} ·{" "}
+                  {feeOptions.find((o) => o.id === bearer)?.label}
+                </span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="space-y-6 pb-5 [&_p:not(:last-child)]:mb-0">
+              <RadioCards label="Checkout" options={checkoutOptions} value={checkout} onChange={setCheckout} />
+              <RadioCards label="Transaction fee" options={feeOptions} value={bearer} onChange={setBearer} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         <div className="space-y-3">
           {checkout === "popup" ? (
@@ -159,7 +170,7 @@ function RadioCards<T extends string | number>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="space-y-2.5">
+    <div className="flex flex-col gap-2.5">
       <p className="text-sm font-medium">{label}</p>
       <RadioGroup
         aria-label={label}
